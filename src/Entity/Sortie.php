@@ -60,7 +60,7 @@ class Sortie
     }
 
     #[Assert\IsTrue()]
-    private function isDateLimiteInscriptionValide()
+    private function isDateLimiteInscriptionValide(): bool
     {
         return $this -> dateLimiteInscription <= $this -> dateHeureDebut;
     }
