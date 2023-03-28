@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Afficher profil{% endblock %}
+{% block body %}
+    <h1>{{ user.pseudo }}</h1>
+    {{ user.prenom }}
+    {{ user.nom }}
+    {{ user.telephone }}
+    {{ user.email }}
+    {{ user.campus.nom }}
+<button type="" class="btn">Retour</button>{#  TODO  #}
+{% endblock %}
+
+
+
