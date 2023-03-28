@@ -25,6 +25,10 @@ class Lieu
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
 
+    #[ORM\ManyToOne(inversedBy: 'lieus')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Ville $ville = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +78,18 @@ class Lieu
     public function setLongitude(?float $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getVille(): ?Ville
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?Ville $ville): self
+    {
+        $this->ville = $ville;
 
         return $this;
     }

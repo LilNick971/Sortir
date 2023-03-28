@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SortieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -32,6 +34,30 @@ class Sortie
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $infosSortie = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'sorties')]
+    private Collection $users;
+
+    #[ORM\ManyToOne(inversedBy: 'sortiesOrganisees')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $organisateur = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Campus $siteOrganisateur = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Lieu $lieu = null;
+
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Etat $etat = null;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     #[Assert\IsTrue()]
     private function isDateLimiteInscriptionValide()
@@ -112,6 +138,81 @@ class Sortie
     public function setInfosSortie(string $infosSortie): self
     {
         $this->infosSortie = $infosSortie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addSorty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeSorty($this);
+        }
+
+        return $this;
+    }
+
+    public function getOrganisateur(): ?User
+    {
+        return $this->organisateur;
+    }
+
+    public function setOrganisateur(?User $organisateur): self
+    {
+        $this->organisateur = $organisateur;
+
+        return $this;
+    }
+
+    public function getSiteOrganisateur(): ?Campus
+    {
+        return $this->siteOrganisateur;
+    }
+
+    public function setSiteOrganisateur(?Campus $siteOrganisateur): self
+    {
+        $this->siteOrganisateur = $siteOrganisateur;
+
+        return $this;
+    }
+
+    public function getLieu(): ?Lieu
+    {
+        return $this->lieu;
+    }
+
+    public function setLieu(?Lieu $lieu): self
+    {
+        $this->lieu = $lieu;
+
+        return $this;
+    }
+
+    public function getEtat(): ?Etat
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?Etat $etat): self
+    {
+        $this->etat = $etat;
 
         return $this;
     }
