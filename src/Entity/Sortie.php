@@ -216,4 +216,8 @@ class Sortie
 
         return $this;
     }
+
+    public function getNbInscrits(): int {
+        return is_null($this->getUsers()) ? 0 : $this->getUsers()->count();
+    }
 }
