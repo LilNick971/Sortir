@@ -26,7 +26,8 @@
                     X
                 {% endif %}N</td>
             <td>{{ sortie.organisateur.pseudo }}</td>
-            <td>*Ajouter des actionzs contextuelles (incription/description/affichage/...)*</td>
+            <td><a href="{{ url('sortie_detail', {'sortie' : sortie.id}) }}">Afficher</a></td>
+{#            <td>*Ajouter des actionzs contextuelles (incription/description/affichage/...)*</td>#}
         </tr>
     {% endfor %}
     </table>
