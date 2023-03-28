@@ -14,6 +14,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 
 class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -36,6 +37,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
             new PasswordCredentials($request->request->get('password', '')),
             [
                 new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                new rememberMeBadge(),
             ]
         );
     }
@@ -47,8 +49,8 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        // return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+         return new RedirectResponse($this->urlGenerator->generate('some_route'));//TODO
+//        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl(Request $request): string
