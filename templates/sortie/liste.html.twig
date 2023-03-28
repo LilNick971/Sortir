@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Liste des sorties
+{% endblock %}
+{% block body %}
+    <table>
+        <tr>
+            <td>Nom de la sortie</td>
+            <td>Date de la sortie</td>
+            <td>Clôture</td>
+            <td>inscrit/places</td>
+            <td>Etat</td>
+            <td>Inscrit</td>
+            <td>Organisteur</td>
+            <td>Actions</td>
+        </tr>
+    {% for sortie in listeSortie %}
+        <tr>
+            <td>{{ sortie.nom }}</td>
+            <td>{{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</td>
+            <td>{{ sortie.dateLimiteInscription | date('d/m/Y H:i')}}</td>
+            <td> {{ sortie.getNbInscrits() }} {% if sortie.nbInscriptionsMax is not null%} /
+                {{ sortie.nbInscriptionsMax }} {% endif %}</td>
+            <td>{{ sortie.etat.libelle }}</td>
+            <td>{% if app.user.sorties.contains(sortie) %}
+                    X
+                {% endif %}N</td>
+            <td>{{ sortie.organisateur.pseudo }}</td>
+            <td>*Ajouter des actionzs contextuelles (incription/description/affichage/...)*</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
+
+
+
