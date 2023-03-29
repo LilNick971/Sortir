@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Nouvelle sortie
+{% endblock %}
+
+{% block body %}
+    {{ form_start(sortieForm) }}
+    {{ form_widget(sortieForm) }}
+    <button>Ajouter</button>
+    {{ form_end(sortieForm) }}
+{% endblock %}
+
+{%  block javascripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js">
+        let $ville = $('#sortie_ville');
+
+        $ville.change(function() {
+            let $form = $(this).closest('form');
+
+            let data = {};
+            data[$ville.attr('nom')] = $ville.val();
+
+            $.ajax({
+                url : $form.attr('action'),
+                type : $form.attr('method'),
+                data : data,
+                complete : function (html) {
+                    $('#sortie_lieu').replaceWith(
+                        $(html.responseText).find('#sortie_lieu')
+                    );
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+
+
