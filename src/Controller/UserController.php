@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,4 +48,33 @@ class UserController extends AbstractController
         return $this->render('user/afficher.html.twig', compact("user"));
     }
 
+
+
+    #[Route('/inscrire/{sortie}', name: '_inscrire')]
+    public function inscrire(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Sortie $sortie): Response
+    {
+        $user = $entityManager->find(User::class, $this->getUser()->getId());
+        $user->addSorty($sortie);
+        $sortie->addUser($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('sortie_liste');
+    }
+
+    #[Route('/desister/{sortie}', name: '_desister')]
+    public function desister(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        Sortie $sortie
+    ): Response
+    {
+        $this->getUser()->removeSorty($sortie);
+        $sortie->removeUser($this->getUser());
+        $entityManager->flush();
+
+        return $this->redirectToRoute('sortie_liste');
+    }
 }

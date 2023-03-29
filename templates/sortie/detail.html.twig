@@ -21,6 +21,13 @@
     <p>Latitude : {{ sortie.lieu.latitude }}</p>
     <p>Longitude : {{ sortie.lieu.longitude }}</p>
 {% endif %}
+
+{% if app.user not in sortie.users %}
+    <a href="{{ path('user_inscrire', {'sortie': sortie.id}) }}">S'inscrie à la sortie</a>
+{% endif %}
+{% if app.user in sortie.users %}
+  <a href="{{ path('user_desister', {'sortie': sortie.id}) }}">Se désister de la sortie</a>
+{% endif %}
 <p>Liste des participants : </p>
 <table>
     <tr>
