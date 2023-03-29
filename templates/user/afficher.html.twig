@@ -3,12 +3,12 @@
 {% block title %}Afficher profil{% endblock %}
 {% block body %}
     <h1>{{ user.pseudo }}</h1>
-    {{ user.prenom }}
-    {{ user.nom }}
-    {{ user.telephone }}
-    {{ user.email }}
-    {{ user.campus.nom }}
-<button type="" class="btn">Retour</button>{#  TODO  #}
+        <p>Prénom : {{ user.prenom }}</p>
+        <p>Nom : {{ user.nom }}</p>
+        <p>Téléphone : {{ user.telephone }}</p>
+        <p>Email : {{ user.email }}</p>
+        <p>Campus : {{ user.campus.nom }}</p>
+<button type="" class="btn">Retour</button>
 {% endblock %}
 
 
