@@ -39,49 +39,66 @@ class SortieType extends AbstractType
                 [
                     'class' => Campus::class,
                     'choice_label' => 'nom'
-                ])
-            ->add('ville', EntityType::class,
-            [
-                'class' => Ville::class,
-                'choice_label' => 'nom'
-            ]);
+                ]);
 
-            $formModifier = function (FormInterface $form, Ville $ville = null){
-                $listeLieux = null === $ville ? [] : $ville->getLieus();
-
-                $form->add('lieu',EntityType::class,
-                    [
-                        'class' => Lieu::class,
-                        'choice_label' => 'nom',
-                        'placeholder' => 'Choix de la ville ?',
-                        'choices' => $listeLieux,
-                    ]);
-            };
 
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
-                function (FormEvent $event) use ($formModifier) {
-                    $data = $event->getData();
+                function(FormEvent $event){
+                    $sortie = $event->getData();
+                    $form = $event->getForm();
 
-                    $formModifier($event->getForm(), $data->getVille());
+                    $ville = $sortie->getVille() ?: null;
 
+                    $this->addElements($form, $ville);
                 }
             );
 
-            $builder->addEventListener(
-                FormEvents::POST_SUBMIT,
-                function (FormEvent $event) use ($formModifier) {
-                    $ville = $event->getForm()->getData();
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+                $data = $event->getData();
 
-                    $formModifier($event->getForm()->getParent(), $ville);
+                $ville = $this->em->getRepository(Ville::class)->find($data['ville']);
 
-                }
-            );
-//            ->add('lieu', EntityType::class,
-//            [
-//                'class' => Lieu::class,
-//                'choice_label' => 'nom'
-//            ]);
+                $this->addElements($form, $ville);
+            }
+        );
+
+
+    }
+
+    protected function addElements(FormInterface $form, Ville $ville = null) {
+        $form->add('ville', EntityType::class,
+            [
+                'required' => true,
+                'data' => $ville,
+                'class' => Ville::class,
+                'choice_label' => 'nom',
+                'placeholder' => 'Choisissez une ville'
+            ]);
+
+        $lieux = array();
+
+        if($ville){
+            $repoLieu = $this->em->getRepository(Lieu::class);
+
+            $lieux = $repoLieu->createQueryBuilder("q")
+                ->where("q.ville = :villeId")
+                ->setParameter("villeId", $ville->getId())
+                ->getQuery()
+                ->getResult();
+        }
+
+        $form->add('lieu', EntityType::class,
+        [
+            'required' => true,
+            'placeholder' => 'Choisissez une ville en premier',
+            'class' => Lieu::class,
+            'choices' => $lieux,
+            'choice_label' => 'nom'
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

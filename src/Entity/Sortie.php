@@ -54,7 +54,10 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Etat $etat = null;
 
-    private ?string $ville = null;
+
+    private ?Ville $ville = null;
+
+
 
     public function __construct()
     {
@@ -223,15 +226,16 @@ class Sortie
         return is_null($this->getUsers()) ? 0 : $this->getUsers()->count();
     }
 
-    public function getVille(): ?string
+    public function getVille(): ?Ville
     {
         return $this->ville;
     }
 
-    public function setVille(string $ville): self
+    public function setVille(?Ville $ville): self
     {
         $this->ville = $ville;
 
         return $this;
     }
+
 }

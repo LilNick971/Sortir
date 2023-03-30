@@ -9,30 +9,40 @@
     {{ form_widget(sortieForm) }}
     <button>Ajouter</button>
     {{ form_end(sortieForm) }}
-{% endblock %}
 
-{%  block javascripts %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js">
-        let $ville = $('#sortie_ville');
-
-        $ville.change(function() {
-            let $form = $(this).closest('form');
-
-            let data = {};
-            data[$ville.attr('nom')] = $ville.val();
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script>
+        $('#sortie_ville').change(function (){
+            let villeSelector = $(this);
 
             $.ajax({
-                url : $form.attr('action'),
-                type : $form.attr('method'),
-                data : data,
-                complete : function (html) {
-                    $('#sortie_lieu').replaceWith(
-                        $(html.responseText).find('#sortie_lieu')
-                    );
+                url : "{{ path('sortie_liste_lieux') }}",
+                type : "GET",
+                dataType : "JSON",
+                data: {
+                    villeId: villeSelector.val()
+                },
+                success: function (lieux) {
+                    let lieuSelect = $("#sortie_lieu");
+
+                    lieuSelect.html('');
+
+                    lieuSelect.append('<option value> Choisissez un lieu de ' + villeSelector.find("option:selected").text() + '</option>');
+
+                    $.each(lieux, function (key, lieu) {
+                        lieuSelect.append('<option value="' + lieu.id + '">' + lieu.nom + '</option>');
+                    });
+                },
+                error: function (err) {
+                    alert("Erreur chargement des données");
                 }
             });
         });
     </script>
+{% endblock %}
+
+{%  block javascripts %}
+
 {% endblock %}
 
 
