@@ -28,11 +28,61 @@ class SortieController extends AbstractController
         SortieRepository $sortieRepository,
     ): Response
     {
-        $listeSortie =$sortieRepository->findBy([
-            'etat' => 2
-        ]);
+        $listeSortie =$sortieRepository->listeSortieAffichage();
         return $this->render('sortie/liste.html.twig',
             compact('listeSortie'),
+        );
+    }
+
+    #[Route('/sortie/annuler/{sortie}', name: 'sortie_annuler')]
+    public function annulerSortie(
+        Sortie $sortie,
+        EntityManagerInterface $entityManager,
+    ): Response
+    {
+        $etat = $entityManager->getRepository(Etat::class)->find(6);
+        $sortie->setEtat($etat);
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('sortie_liste');
+    }
+
+    #[Route('/sortie/publier/{sortie}', name: 'sortie_publier')]
+    public function publierSortie(
+        Sortie $sortie,
+        EntityManagerInterface $entityManager,
+    ): Response
+    {
+        $etat = $entityManager->getRepository(Etat::class)->find(2);
+        $sortie->setEtat($etat);
+        $entityManager->persist($sortie);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('sortie_liste');
+    }
+
+    #[Route('/sortie/modifier/{sortie}', name: 'sortie_modif')]
+    public function modifSortie(
+        Sortie $sortie,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response
+    {
+        $sortieForm = $this->createForm(SortieType::class, $sortie);
+        $sortieForm->handleRequest($request);
+
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            return  $this->redirectToRoute('sortie_liste');
+
+        }
+
+        return $this->render('sortie/modif.html.twig',
+            compact('sortieForm'),
         );
     }
 
