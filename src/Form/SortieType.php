@@ -70,6 +70,7 @@ class SortieType extends AbstractType
     }
 
     protected function addElements(FormInterface $form, Ville $ville = null) {
+
         $form->add('ville', EntityType::class,
             [
                 'required' => true,
