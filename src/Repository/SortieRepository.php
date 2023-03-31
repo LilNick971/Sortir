@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Filtre;
 use App\Entity\Sortie;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -63,4 +65,63 @@ class SortieRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findSearch(Filtre $filtre, User $user)
+    {
+        $query = $this
+            ->createQueryBuilder('q');
+
+        if ($filtre->getCampus()){
+            $query = $query
+                ->andWhere('q.siteOrganisateur = :campus')
+                ->setParameter('campus', $filtre->getCampus());
+        }
+
+        if ($filtre->getNom()){
+            $query = $query
+                ->andWhere('q.nom LIKE :nom')
+                ->setParameter('nom', "%{$filtre->getNom()}%");
+        }
+
+        if ($filtre->getDateDebut()){
+            $query = $query
+                ->andWhere('q.dateHeureDebut >= :dDeb')
+                ->setParameter('dDeb', $filtre->getDateDebut());
+        }
+
+        if ($filtre->getDateLimite()){
+            $query = $query
+                ->andWhere('q.dateLimiteInscription <= :dLim')
+                ->setParameter('dLim', $filtre->getDateLimite());
+        }
+
+        if ($filtre->getSortieOrganisateur()){
+            $query = $query
+                ->andWhere('q.organisateur = :sOrg')
+                ->setParameter('sOrg', $user);
+        }
+
+        if ($filtre->getSortieInscrit() && !$filtre->getSortieNonInscrit()){
+            $query = $query
+//                ->innerJoin('q.users', 'u')
+                ->andWhere(':sIns MEMBER OF q.users')
+                ->setParameter('sIns', $user);
+        }
+
+        if ($filtre->getSortieNonInscrit() && !$filtre->getSortieInscrit()){
+            $query = $query
+//                ->innerJoin('q.users', 'u')
+                ->andWhere(':sNon NOT MEMBER OF q.users')
+                ->setParameter('sNon', $user);
+        }
+
+        if ($filtre->getSortiePassee()){
+            $query =$query
+                ->andWhere('q.etat = :sPas')
+                ->setParameter('sPas', 5);
+        }
+
+        return $query->getQuery()->getResult();
+
+    }
+
 }

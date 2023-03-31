@@ -3,6 +3,45 @@
     Liste des sorties
 {% endblock %}
 {% block body %}
+
+
+    <div class="jumbotton">
+        <div class="container">
+            {{ form_start(form) }}
+            <div class="form-row">
+                <div class="col">
+                    <p>Campus : {{ form_row(form.campus) }}</p>
+                    <p>Le nom de la sortie : {{ form_row(form.nom) }}</p>
+                    <p>Entre {{ form_row(form.dateDebut) }} et {{ form_row(form.dateLimite) }}</p>
+                </div>
+                <div class="col">
+                    {{ form_row(form.sortieOrganisateur) }}
+                    {{ form_row(form.sortieInscrit) }}
+                    {{ form_row(form.sortieNonInscrit) }}
+                    {{ form_row(form.sortiePassee) }}
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary">Recherche</button>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <table>
         <tr>
             <td>Nom de la sortie</td>
