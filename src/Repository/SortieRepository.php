@@ -41,6 +41,12 @@ class SortieRepository extends ServiceEntityRepository
         }
     }
 
+    public function listeSortieAffichage() {
+        $query = $this->createQueryBuilder("q");
+        $query->where($query->expr()->not($query->expr()->eq('q.etat', 1)));
+        return $query->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Sortie[] Returns an array of Sortie objects
 //     */

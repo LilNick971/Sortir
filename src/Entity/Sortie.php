@@ -54,6 +54,11 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Etat $etat = null;
 
+
+    private ?Ville $ville = null;
+
+
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -220,4 +225,17 @@ class Sortie
     public function getNbInscrits(): int {
         return is_null($this->getUsers()) ? 0 : $this->getUsers()->count();
     }
+
+    public function getVille(): ?Ville
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?Ville $ville): self
+    {
+        $this->ville = $ville;
+
+        return $this;
+    }
+
 }

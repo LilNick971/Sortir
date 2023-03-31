@@ -8,7 +8,7 @@
 <p>Nom de la sortie : {{ sortie.nom }}</p>
 <p>Date et heure de la sortie : {{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</p>
 <p>Date limite d'inscription : {{ sortie.dateLimiteInscription | date('d/m/Y H:i')}}</p>
-{% if sortie.nbInscriptionsMax is not null%} /
+{% if sortie.nbInscriptionsMax is not null%}
     <p>Nombres de places : {{ sortie.nbInscriptionsMax }}</p>
 {% endif %}
 <p>Durée : {{ sortie.duree | date('H:i:s') }}</p>
@@ -17,15 +17,25 @@
 <p>Lieu : {{ sortie.lieu.nom }}</p>
 <p>Rue : {{ sortie.lieu.rue }}</p>
 <p>Code Postal : {{ sortie.lieu.ville.codePostal }}</p>
-{% if sortie.lieu.latitude is not null and sortie.lieu.longitude is not null%} /
+{% if sortie.lieu.latitude is not null and sortie.lieu.longitude is not null%}
     <p>Latitude : {{ sortie.lieu.latitude }}</p>
     <p>Longitude : {{ sortie.lieu.longitude }}</p>
 {% endif %}
 
-{% if app.user not in sortie.users %}
-    <a href="{{ path('user_inscrire', {'sortie': sortie.id}) }}">S'inscrie à la sortie</a>
+    {% if app.user is same as sortie.organisateur %}
+        {% if sortie.etat.libelle is same as 'Créée' %}
+            <a href="{{ url('sortie_modif', {'sortie': sortie.id}) }}">Modifier</a>
+            <a href="{{ url('sortie_publier', {'sortie': sortie.id}) }}">Publier</a>
+        {% endif %}
+        {% if sortie.etat.libelle is same as 'Ouverte' or sortie.etat.libelle is same as 'Clôturée'%}
+            <a href="{{ url('sortie_annuler', {'sortie': sortie.id}) }}">Annuler</a>
+        {% endif %}
+    {% endif %}
+    <br>
+{% if app.user not in sortie.users and sortie.etat.libelle is same as 'Ouverte'%}
+    <a href="{{ path('user_inscrire', {'sortie': sortie.id}) }}">S'inscrire à la sortie</a>
 {% endif %}
-{% if app.user in sortie.users %}
+{% if app.user in sortie.users and (sortie.etat.libelle is same as 'Ouverte' or sortie.etat.libelle is same as 'Clôturée')%}
   <a href="{{ path('user_desister', {'sortie': sortie.id}) }}">Se désister de la sortie</a>
 {% endif %}
 <p>Liste des participants : </p>
