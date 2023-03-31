@@ -2,12 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Filtre;
 use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Form\FiltreFormType;
 use App\Form\SortieType;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,15 +27,30 @@ class SortieController extends AbstractController
     {
         $this->em = $em;
     }
+    
     #[Route('/sortie/liste', name: 'sortie_liste')]
     public function listeSorties(
+        EntityManagerInterface $entityManagerInterface,
         SortieRepository $sortieRepository,
+        Request $request,
     ): Response
     {
+        $filtre = new Filtre();
+        $form = $this->createForm(FiltreFormType::class, $filtre);
+        $form->handleRequest($request);
+//        $search = $sortieRepository->findSearch($filtre, $this->getUser());
+
         $listeSortie =$sortieRepository->listeSortieAffichage();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $listeSortie = $sortieRepository->findSearch($filtre, $this->getUser());
+
+        }
         return $this->render('sortie/liste.html.twig',
-            compact('listeSortie'),
+            compact('listeSortie', 'form'),
         );
+
     }
 
     #[Route('/sortie/annuler/{sortie}', name: 'sortie_annuler')]
