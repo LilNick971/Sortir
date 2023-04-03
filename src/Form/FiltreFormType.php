@@ -28,12 +28,14 @@ class FiltreFormType extends AbstractType
                 'required' => false
             ])
             ->add('dateDebut', DateType::class, [
-                'html5' => false,
-                'required' => false
+//                'html5' => false,
+                'required' => false,
+                'widget' => 'single_text',
             ])
             ->add('dateLimite', DateType::class, [
-                'html5' => false,
-                'required' => false
+//                'html5' => false,
+                'required' => false,
+                'widget' => 'single_text',
             ])
             ->add('sortieOrganisateur', CheckboxType::class, [
                 'label' => 'Sorties auxquelles dont je suis l\'organisateur/trice',
