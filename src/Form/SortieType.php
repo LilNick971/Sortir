@@ -32,9 +32,18 @@ class SortieType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('dateHeureDebut')
-            ->add('duree')
-            ->add('dateLimiteInscription')
+            ->add('dateHeureDebut', null,
+            [
+                'widget' => 'single_text'
+            ])
+            ->add('duree', null,
+                [
+                    'widget' => 'single_text'
+                ])
+            ->add('dateLimiteInscription', null,
+                [
+                    'widget' => 'single_text'
+                ])
             ->add('nbInscriptionsMax')
             ->add('infosSortie')
             ->add('siteOrganisateur', EntityType::class,
