@@ -2,10 +2,8 @@ let champNom = $("#sortie_choixLieu_nom");
 let champRue = $("#sortie_choixLieu_rue");
 let champLat = $("#sortie_choixLieu_latitude");
 let champLong = $("#sortie_choixLieu_longitude");
-champNom.prop("display", "none");
-champRue.prop("display", "none");
-champLat.prop("display", "none");
-champLong.prop("display", "none");
+let champChoixLieu = $("#sortie_choixLieu");
+champChoixLieu.parent().css("display", "none");
 
 $('#sortie_ville').change(function (){
     let villeSelector = $(this);
@@ -43,12 +41,9 @@ $('#sortie_ville').change(function (){
                 champLat.val("");
                 champLong.val("");
 
-                champNom.prop("display", "block");
-                champRue.prop("display", "block");
-                champLat.prop("display", "block");
-                champLong.prop("display", "block");
+                champChoixLieu.parent().css("display", "block");
             },
-            error: function (err) {
+            error: function () {
                 alert("Erreur chargement des données de la ville");
             }
         });
@@ -63,7 +58,7 @@ $('#sortie_ville').change(function (){
             success: function (ville) {
                 codeSelect.val(ville[0].codePostal);
             },
-            error: function (err) {
+            error: function () {
                 alert("Erreur chargement des données");
             }
         });
@@ -78,11 +73,7 @@ $('#sortie_lieu').change(function (){
         champRue.val("");
         champLat.val("");
         champLong.val("");
-
-        champNom.prop("display", "block");
-        champRue.prop("display", "block");
-        champLat.prop("display", "block");
-        champLong.prop("display", "block");
+        champChoixLieu.parent().css("display", "block");
 
     }else{
         $.ajax({
@@ -103,12 +94,9 @@ $('#sortie_lieu').change(function (){
                     champLat.val("");
                     champLong.val("");
                 }
-                champNom.prop("display", "none");
-                champRue.prop("display", "none");
-                champLat.prop("display", "none");
-                champLong.prop("display", "none");
+                champChoixLieu.parent().css("display", "none");
             },
-            error: function (err) {
+            error: function () {
                 alert("Erreur chargement des données du lieu");
             }
         })
