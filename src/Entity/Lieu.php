@@ -94,4 +94,16 @@ class Lieu
         return $this;
     }
 
+    public function equal(?Lieu $lieu): bool
+    {
+        if (
+            $this->getNom() === $lieu->getNom() &&
+            $this->getRue() === $lieu->getRue() &&
+            $this->getVille() === $lieu->getVille()
+        ){
+            return true;
+        }
+        return false;
+    }
+
 }

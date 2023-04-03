@@ -57,7 +57,7 @@ class Sortie
 
     private ?Ville $ville = null;
 
-
+    private ?Lieu $choixLieu = null;
 
     public function __construct()
     {
@@ -236,6 +236,18 @@ class Sortie
         $this->ville = $ville;
 
         return $this;
+    }
+
+    public function getChoixLieu(): ?Lieu
+    {
+        return $this->choixLieu;
+    }
+
+    public function setChoixLieu(?Lieu $choixLieu): self
+    {
+        $this->choixLieu = $choixLieu;
+
+        return  $this;
     }
 
 }
