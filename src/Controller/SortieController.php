@@ -6,10 +6,13 @@ use App\Entity\Filtre;
 use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use App\Form\FiltreFormType;
 use App\Form\SortieType;
 use App\Repository\SortieRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -88,11 +91,25 @@ class SortieController extends AbstractController
     ): Response
     {
         $sortie->setVille($sortie->getLieu()->getVille());
+        $sortie->setChoixLieu($sortie->getLieu());
         $sortieForm = $this->createForm(SortieType::class, $sortie);
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
-
+            if($sortie->getLieu() === null){
+                $infosLieu = $sortie->getChoixLieu();
+                $nouveauLieu = new Lieu();
+                $nouveauLieu->setNom($infosLieu->getNom());
+                $nouveauLieu->setVille($sortie->getVille());
+                $nouveauLieu->setRue($infosLieu->getRue());
+                if ($infosLieu->getLatitude() !== null && $infosLieu->getLongitude()!== null){
+                    $nouveauLieu->setLatitude($infosLieu->getLatitude());
+                    $nouveauLieu->setLongitude($infosLieu->getLongitude());
+                }
+                $entityManager->persist($nouveauLieu);
+                $sortie->setLieu($nouveauLieu);
+            }
+            $entityManager->refresh($sortie->getChoixLieu());
             $entityManager->persist($sortie);
             $entityManager->flush();
 
@@ -116,10 +133,23 @@ class SortieController extends AbstractController
         $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            if($sortie->getLieu() === null){
+                $infosLieu = $sortie->getChoixLieu();
+                $nouveauLieu = new Lieu();
+                $nouveauLieu->setNom($infosLieu->getNom());
+                $nouveauLieu->setVille($sortie->getVille());
+                $nouveauLieu->setRue($infosLieu->getRue());
+                if ($infosLieu->getLatitude() !== null && $infosLieu->getLongitude()!== null){
+                    $nouveauLieu->setLatitude($infosLieu->getLatitude());
+                    $nouveauLieu->setLongitude($infosLieu->getLongitude());
+                }
+                $entityManager->persist($nouveauLieu);
+                $entityManager->flush();
+                $sortie->setLieu($nouveauLieu);
+            }
             $sortie->setOrganisateur($this->getUser());
             $etat = $entityManager->getRepository(Etat::class)->find(1);
             $sortie->setEtat($etat);
-
             $entityManager->persist($sortie);
             $entityManager->flush();
 
@@ -153,6 +183,43 @@ class SortieController extends AbstractController
             );
         }
 
+        return new JsonResponse(($responseArray));
+    }
+
+    #[Route('/sortie/getPostalVille', name: 'sortie_postal_ville')]
+    public function codePostalVille(
+        Request $request,
+    ): Response
+    {
+        $villeRepo = $this->em->getRepository(Ville::class);
+        $ville = $villeRepo->find($request->query->get('villeId'));
+
+        $responseArray = array();
+
+        $responseArray [] = array(
+            "codePostal" => $ville->getCodePostal()
+        );
+        dump($responseArray);
+        return new JsonResponse(($responseArray));
+    }
+
+    #[Route('/sortie/getInfosLieu', name: 'sortie_detail_lieu')]
+    public function getInfosLieu(
+        Request $request,
+    ): Response
+    {
+        $lieuxRepo = $this->em->getRepository(Lieu::class);
+        $lieu = $lieuxRepo->find($request->query->get('lieuId'));
+
+        $responseArray = array();
+
+        $responseArray [] = array(
+            "nom" => $lieu->getNom(),
+            "rue" => $lieu->getRue(),
+            "latitude" => $lieu->getLatitude(),
+            "longitude" => $lieu->getLongitude()
+        );
+        dump($responseArray);
         return new JsonResponse(($responseArray));
     }
 

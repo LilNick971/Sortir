@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -80,6 +82,14 @@ class SortieType extends AbstractType
                 'placeholder' => 'Choisissez une ville'
             ]);
 
+        $codePostal = $ville === null ? '' : $ville->getCodePostal();
+        $form->add('codePostal', TextType::class,
+        [
+            'mapped' => false,
+            'disabled' => true,
+            'data' => $codePostal
+        ]);
+
         $lieux = array();
 
         if($ville){
@@ -94,11 +104,17 @@ class SortieType extends AbstractType
 
         $form->add('lieu', EntityType::class,
         [
-            'required' => true,
+            'required' => false,
             'placeholder' => 'Choisissez une ville en premier',
             'class' => Lieu::class,
             'choices' => $lieux,
             'choice_label' => 'nom'
+        ]);
+
+        $form->add('choixLieu', LieuType::class,
+        [
+//            'required' => false,
+//            'disabled' => true
         ]);
     }
 
