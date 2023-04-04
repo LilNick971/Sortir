@@ -61,7 +61,7 @@
             <td> {{ sortie.getNbInscrits() }} {% if sortie.nbInscriptionsMax is not null%} /
                 {{ sortie.nbInscriptionsMax }} {% endif %}</td>
             <td>{{ sortie.etat.libelle }}</td>
-            <td>{% if app.user.sorties.contains(sortie) %}
+            <td>{% if sortie.users.contains(app.user) %}
                     X
                 {% endif %}</td>
             <td>{{ sortie.organisateur.pseudo }}</td>
