@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Config\Doctrine\Orm\EntityManagerConfig;
 
 #[Route('/user', name: 'user')]//Préfixe
@@ -38,6 +39,7 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_USER_ACTIF')]
     #[Route('/afficher/{user}', name: '_afficher')]
     public function afficher(
         User $user,
@@ -50,20 +52,25 @@ class UserController extends AbstractController
 
 
 
+    #[IsGranted('ROLE_USER_ACTIF')]
     #[Route('/inscrire/{sortie}', name: '_inscrire')]
     public function inscrire(
         Request $request,
         EntityManagerInterface $entityManager,
         Sortie $sortie): Response
     {
+
         $user = $entityManager->find(User::class, $this->getUser()->getId());
-        $user->addSorty($sortie);
-        $sortie->addUser($user);
-        $entityManager->flush();
+        if($sortie->getNbInscriptionsMax() !== null and $sortie->getNbInscrits() < $sortie->getNbInscriptionsMax()) {
+            $user->addSorty($sortie);
+            $sortie->addUser($user);
+            $entityManager->flush();
+        }
 
         return $this->redirectToRoute('sortie_liste');
     }
 
+    #[IsGranted('ROLE_USER_ACTIF')]
     #[Route('/desister/{sortie}', name: '_desister')]
     public function desister(
         Request $request,

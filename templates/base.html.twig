@@ -18,11 +18,18 @@
         <nav>
             {% if not app.user %}
                 <a href="{{ url('app_login') }}">Connexion</a>
+                <a href="{{ url('app_register') }}">Créer un compte</a>
             {% endif %}
             {% if app.user %}
                 <a href="{{ url('app_logout') }}">Deconnexion</a>
+                <a href="{{ url('user_modifier') }}">Mon compte</a>
                 <a href="{{ url('sortie_liste') }}">Liste des sorties</a>
-                <a href="{{ url('sortie_ajout') }}">Ajouter une Sortie</a>
+                {% if is_granted('ROLE_USER_ACTIF') %}
+                    <a href="{{ url('sortie_ajout') }}">Ajouter une Sortie</a>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ url('admin') }}">Gestion</a>
+                {% endif %}
             {% endif %}
         </nav>
     </header>

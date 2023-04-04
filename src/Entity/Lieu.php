@@ -106,4 +106,8 @@ class Lieu
         return false;
     }
 
+    public function __toString(){
+        return $this->nom;
+    }
+
 }
