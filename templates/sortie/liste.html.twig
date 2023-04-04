@@ -53,7 +53,7 @@
             <td>{{ sortie.etat.libelle }}</td>
             {% if is_granted('ROLE_USER_ACTIF') %}
                 <td>
-                    {% if app.user.sorties.contains(sortie) %}
+                    {% if sortie.users.contains(app.user) %}
                         X
                     {% endif %}
                 </td>

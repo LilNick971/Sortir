@@ -42,7 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Regex('/\d+/')]
     private ?string $telephone = null;
 
-    #[ORM\Column(length: 75)]
+    #[ORM\Column(length: 75, unique: true)]
     #[Assert\Regex('/^[a-zA-Z]+[(-|\.)?[a-zA-Z0-9]+]*@[a-zA-Z]+[(-|\.)?[a-zA-Z]+]*\.[a-z]{2,4}$/')]
     private ?string $email = null;
 
@@ -54,6 +54,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
     private Collection $sortiesOrganisees;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $activationToken = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $resetToken = null;
 
     public function __construct()
     {
@@ -241,6 +247,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $sortiesOrganisee->setOrganisateur(null);
             }
         }
+
+        return $this;
+    }
+
+
+    public function getActivationToken(): ?string
+    {
+        return $this->activationToken;
+    }
+
+    public function setActivationToken(?string $activationToken): self
+    {
+        $this->activationToken = $activationToken;
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
 
         return $this;
     }
