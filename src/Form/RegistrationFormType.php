@@ -29,7 +29,7 @@ class RegistrationFormType extends AbstractType
             [
                 'class' => Campus::class,
                 'choice_label' => 'nom',
-                'placeholder' => ''
+                'placeholder' => 'Aucun campus'
             ])
             ->add('password', RepeatedType::class, [
                 // instead of being set onto the object directly,

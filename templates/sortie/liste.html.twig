@@ -28,20 +28,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <table>
         <tr>
             <td>Nom de la sortie</td>
@@ -49,9 +35,13 @@
             <td>Clôture</td>
             <td>inscrit/places</td>
             <td>Etat</td>
-            <td>Inscrit</td>
+            {% if is_granted('ROLE_USER_ACTIF') %}
+                <td>Inscrit</td>
+            {% endif %}
             <td>Organisteur</td>
-            <td>Actions</td>
+            {% if is_granted('ROLE_USER_ACTIF') %}
+                <td>Actions</td>
+            {% endif %}
         </tr>
     {% for sortie in listeSortie %}
         <tr>
@@ -61,11 +51,17 @@
             <td> {{ sortie.getNbInscrits() }} {% if sortie.nbInscriptionsMax is not null%} /
                 {{ sortie.nbInscriptionsMax }} {% endif %}</td>
             <td>{{ sortie.etat.libelle }}</td>
-            <td>{% if sortie.users.contains(app.user) %}
-                    X
-                {% endif %}</td>
+            {% if is_granted('ROLE_USER_ACTIF') %}
+                <td>
+                    {% if sortie.users.contains(app.user) %}
+                        X
+                    {% endif %}
+                </td>
+            {% endif %}
             <td>{{ sortie.organisateur.pseudo }}</td>
-            <td><a href="{{ url('sortie_detail', {'sortie' : sortie.id}) }}">Afficher</a></td>
+            {% if is_granted('ROLE_USER_ACTIF') %}
+                <td><a href="{{ url('sortie_detail', {'sortie' : sortie.id}) }}">Afficher</a></td>
+            {% endif %}
         </tr>
     {% endfor %}
     </table>

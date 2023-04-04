@@ -43,7 +43,7 @@ class SortieRepository extends ServiceEntityRepository
 
     public function listeSortieAffichage() {
         $query = $this->createQueryBuilder("q");
-        $query->where($query->expr()->not($query->expr()->eq('q.etat', 1)));
+        $query->where('q.etat != 1');
         return $query->getQuery()->getResult();
     }
 
@@ -121,7 +121,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($filtre->getSortiePassee()){
-            $query =$query
+            $query = $query
                 ->andWhere('q.etat = :sPas')
                 ->setParameter('sPas', 5);
         }

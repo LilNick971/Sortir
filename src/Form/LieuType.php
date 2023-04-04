@@ -16,12 +16,13 @@ class LieuType extends AbstractType
         $builder
             ->add('nom')
             ->add('rue')
-            ->add('latitude')
-            ->add('longitude')
-            ->add('ville', EntityType::class,
+            ->add('latitude',null,
+            [
+                'required' => false
+            ])
+            ->add('longitude',null,
                 [
-                    'class' => Ville::class,
-                    'choice_label' => 'nom'
+                    'required' => false
                 ])
         ;
     }
