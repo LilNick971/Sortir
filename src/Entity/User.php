@@ -61,6 +61,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $resetToken = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Image $avatar = null;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -278,5 +281,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __toString(){
         return $this->pseudo;
+    }
+
+    public function getAvatar(): ?Image
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?Image $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
     }
 }

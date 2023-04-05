@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\LectureCSVType;
@@ -14,19 +15,47 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Config\Doctrine\Orm\EntityManagerConfig;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/user', name: 'user')]//Préfixe
 class UserController extends AbstractController
 {
 
     #[Route('/modifier', name: '_modifier')]
-    public function modifier(Request $request, EntityManagerInterface $entityManager): Response
+    public function modifier(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $user = $entityManager->find(User::class, $this->getUser()->getId());
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // On récupère les images transmises
+            $imageFile = $form->get('image')->getData();
+
+            // On boucle sur les images
+            if ($imageFile){
+                $originalFileName = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+
+                $safeFilename = $slugger->slug($originalFileName);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // On crée l'image dans la base de données
+                $img = new Image();
+                $img->setValeur($newFilename);
+
+                $user->setAvatar($img);
+            }
 
             $entityManager->persist($user);
             $entityManager->flush();
