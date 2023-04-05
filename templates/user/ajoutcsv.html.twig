@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Ajout via CSV
+{% endblock %}
+
+{% block body %}
+    {{ form_start(csvForm) }}
+
+    {{ form_widget(csvForm) }}
+    <button>Ajouter</button>
+
+     {{ form_end(csvForm) }}
+{% endblock %}
+

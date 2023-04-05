@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\ArchiveSortie;
 use App\Entity\Campus;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
@@ -46,6 +47,7 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToCrud('Sorties', 'fas fa-bars', Sortie::class);
+        yield MenuItem::linkToCrud('Archives', 'fas fa-box-archive', ArchiveSortie::class);
         yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', User::class);
         yield MenuItem::linkToCrud('Villes', 'fas fa-city', Ville::class);
         yield MenuItem::linkToCrud('Campus', 'fas fa-graduation-cap', Campus::class);
