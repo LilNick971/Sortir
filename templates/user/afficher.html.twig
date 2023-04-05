@@ -2,13 +2,13 @@
 
 {% block title %}Afficher profil{% endblock %}
 {% block body %}
+    <img src="{{ asset('uploads/' ~ user.avatar ) }}" alt="Avatar"/>
     <h1>{{ user.pseudo }}</h1>
         <p>Prénom : {{ user.prenom }}</p>
         <p>Nom : {{ user.nom }}</p>
         <p>Téléphone : {{ user.telephone }}</p>
         <p>Email : {{ user.email }}</p>
         <p>Campus : {{ user.campus.nom }}</p>
-<button type="" class="btn">Retour</button>
 {% endblock %}
 
 
