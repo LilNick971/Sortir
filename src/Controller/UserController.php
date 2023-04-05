@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Sortie;
 use App\Entity\User;
+use App\Form\LectureCSVType;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -84,4 +85,48 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('sortie_liste');
     }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/ajoutmultiple', name: '_ajoutmultiple')]
+    public function ajoutMultiple(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $userPasswordHasher
+    ): Response
+    {
+        $csvForm = $this->createForm(LectureCSVType::class);
+        $csvForm->handleRequest($request);
+
+        if ($csvForm->isSubmitted() && $csvForm->isValid()){
+            $fichiercsv = $csvForm->get('liste')->getData();
+            if($fichiercsv){
+                if(($handle = fopen($fichiercsv->getPathname(), "r")) !== false){
+                    while(($data = fgetcsv($handle)) !== false) {
+                        $user = new User();
+                        $user->setPseudo($data[0]);
+                        $user->setNom($data[1]);
+                        $user->setPrenom($data[2]);
+                        $user->setEmail($data[3]);
+                        $plainPassword = $user->getNom().$user->getPrenom();
+                        $user->setPassword(
+                            $userPasswordHasher->hashPassword(
+                                $user,
+                                $plainPassword
+                            )
+                        );
+                        $user->setRoles(["ROLE_USER_ACTIF"]);
+                        $entityManager->persist($user);
+                        $entityManager->flush();
+                    }
+                }
+            }
+            return $this->redirectToRoute('admin');
+        }
+
+        return $this->render('user/ajoutcsv.html.twig',
+            compact('csvForm')
+        );
+    }
+
+
 }

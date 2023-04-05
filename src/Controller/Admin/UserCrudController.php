@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -22,7 +25,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 class UserCrudController extends AbstractCrudController
 {
     public function __construct(
-        public UserPasswordHasherInterface $userPasswordHasher
+        public UserPasswordHasherInterface $userPasswordHasher,
+        public EntityManagerInterface $entityManager
     ){}
 
     public static function getEntityFqcn(): string
@@ -30,6 +34,22 @@ class UserCrudController extends AbstractCrudController
         return User::class;
     }
 
+    public function configureActions(Actions $actions): Actions
+    {
+        $ajoutMultiple = Action::new('ajoutMultiple', 'Ajouter plusieurs utilisateurs')
+            ->displayAsButton()
+            ->linkToCrudAction('ajoutMultiple')
+            ->createAsGlobalAction();
+
+        return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $ajoutMultiple);
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud->showEntityActionsInlined();
+    }
 
     public function configureFields(string $pageName): iterable
     {
@@ -91,6 +111,10 @@ class UserCrudController extends AbstractCrudController
             $hash = $this->userPasswordHasher->hashPassword($this->getUser(), $password);
             $form->getData()->setPassword($hash);
         };
+    }
+
+    private function ajoutMultiple(){
+
     }
 
 }
