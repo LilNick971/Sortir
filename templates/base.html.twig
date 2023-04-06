@@ -23,7 +23,7 @@
             {% if app.user %}
                 <a href="{{ url('app_logout') }}">Deconnexion</a>
                 <a href="{{ url('user_modifier') }}">Modifier mon compte compte</a>
-                <a href="{{ path("user_afficher", {"user" : app.user.id}) }}">Mon compte</a>
+                <a href="{{ path("user_afficher", {"participant" : app.user.id}) }}">Mon compte</a>
                 <a href="{{ url('sortie_liste') }}">Liste des sorties</a>
                 {% if is_granted('ROLE_USER_ACTIF') %}
                     <a href="{{ url('sortie_ajout') }}">Ajouter une Sortie</a>

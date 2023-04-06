@@ -2,13 +2,13 @@
 
 {% block title %}Afficher profil{% endblock %}
 {% block body %}
-    <img src="{{ asset('uploads/' ~ user.avatar ) }}" alt="Avatar"/>
-    <h1>{{ user.pseudo }}</h1>
-        <p>Prénom : {{ user.prenom }}</p>
-        <p>Nom : {{ user.nom }}</p>
-        <p>Téléphone : {{ user.telephone }}</p>
-        <p>Email : {{ user.email }}</p>
-        <p>Campus : {{ user.campus.nom }}</p>
+    <img src="{{ asset('uploads/' ~ participant.avatar ) }}" alt="Avatar"/>
+    <h1>{{ participant.pseudo }}</h1>
+        <p>Prénom : {{ participant.prenom }}</p>
+        <p>Nom : {{ participant.nom }}</p>
+        <p>Téléphone : {{ participant.telephone }}</p>
+        <p>Email : {{ participant.email }}</p>
+        <p>Campus : {{ participant.campus.nom }}</p>
 {% endblock %}
 
 

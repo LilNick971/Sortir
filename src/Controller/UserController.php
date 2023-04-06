@@ -70,14 +70,14 @@ class UserController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER_ACTIF')]
-    #[Route('/afficher/{user}', name: '_afficher')]
+    #[Route('/afficher/{participant}', name: '_afficher')]
     public function afficher(
-        User $user,
+        User $participant,
         Request $request,
         EntityManagerInterface $entityManager
     ): Response
     {
-        return $this->render('user/afficher.html.twig', compact("user"));
+        return $this->render('user/afficher.html.twig', compact("participant"));
     }
 
 
