@@ -9,38 +9,42 @@
         <div class="container">
             {{ form_start(form) }}
             <div class="form-row">
-                <div class="col">
-                    <p>Campus : {{ form_row(form.campus) }}</p>
-                    <p>Le nom de la sortie : {{ form_row(form.nom) }}</p>
-                    <p>Entre {{ form_row(form.dateDebut) }} et {{ form_row(form.dateLimite) }}</p>
+                <div class="col-1">
+                    {{ form_row(form.campus) }}
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.dateDebut) }}
+                    {{ form_row(form.dateLimite) }}
                 </div>
-                <div class="col">
+                <div class="col-2">
                     {{ form_row(form.sortieOrganisateur) }}
                     {{ form_row(form.sortieInscrit) }}
                     {{ form_row(form.sortieNonInscrit) }}
                     {{ form_row(form.sortiePassee) }}
                 </div>
-                <div class="col">
+                <div class="col-3">
                     <button class="btn btn-primary">Recherche</button>
                 </div>
             </div>
             {{ form_end(form) }}
         </div>
     </div>
-
+    <br>
+    <br>
+    <br>
+    <br>
     <table>
         <tr>
-            <td>Nom de la sortie</td>
-            <td>Date de la sortie</td>
-            <td>Clôture</td>
-            <td>inscrit/places</td>
-            <td>Etat</td>
+            <th>Nom de la sortie</th>
+            <th>Date de la sortie</th>
+            <th>Clôture</th>
+            <th>inscrit/places</th>
+            <th>Etat</th>
             {% if is_granted('ROLE_USER_ACTIF') %}
-                <td>Inscrit</td>
+                <th>Inscrit</th>
             {% endif %}
-            <td>Organisteur</td>
+            <th>Organisteur</th>
             {% if is_granted('ROLE_USER_ACTIF') %}
-                <td>Actions</td>
+                <th>Actions</th>
             {% endif %}
         </tr>
     {% for sortie in listeSortie %}
