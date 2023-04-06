@@ -17,7 +17,7 @@ class LectureCSVType extends AbstractType
             [
                 'constraints' => [
                     new File([
-                        'extensions' => ['csv' => 'text/plain'],
+                        'extensions' => ['csv'],
                         'extensionsMessage' => 'Le fichier doit être un .csv'
                     ])
                 ]

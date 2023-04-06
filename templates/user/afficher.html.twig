@@ -7,7 +7,7 @@
     <h1>{{ participant.pseudo }}</h1>
     {% if not is_granted('ROLE_USER_ACTIF') %}
         <p style="color: red">Votre compte n'est pas actif !</p>
-        <p style="color: red">Veuillez contacter l'administrateur à truc@admin.fr</p>
+        <p style="color: red">Veuillez contacter l'administrateur à ada.lovelace@info.com</p>
     {% endif %}
         <p>Prénom : {{ participant.prenom }}</p>
         <p>Nom : {{ participant.nom }}</p>

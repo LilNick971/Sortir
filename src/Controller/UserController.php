@@ -94,7 +94,7 @@ class UserController extends AbstractController
         );
     }
 
-    #[IsGranted('ROLE_USER_ACTIF')]
+//    #[IsGranted('ROLE_USER_ACTIF')]
     #[Route('/afficher/{participant}', name: '_afficher')]
     public function afficher(
         User $participant,
@@ -102,7 +102,11 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager
     ): Response
     {
-        return $this->render('user/afficher.html.twig', compact("participant"));
+        $user = $this->getUser();
+        if (in_array('ROLE_USER_ACTIF', $user->getRoles(),true) || $user->getId() === $participant->getId()){
+            return $this->render('user/afficher.html.twig', compact("participant"));
+        }
+        return $this->redirectToRoute('sortie_liste');
     }
 
 
@@ -117,7 +121,7 @@ class UserController extends AbstractController
 
         $user = $entityManager->find(User::class, $this->getUser()->getId());
         $etatOuvert = $entityManager->getRepository(Etat::class)->find(2);
-        if($sortie->getNbInscriptionsMax() !== null and $sortie->getNbInscrits() < $sortie->getNbInscriptionsMax() and $sortie->getEtat() === $etatOuvert) {
+        if(($sortie->getNbInscriptionsMax() !== null and $sortie->getNbInscrits() < $sortie->getNbInscriptionsMax()) and $sortie->getEtat() === $etatOuvert) {
             $user->addSorty($sortie);
             $sortie->addUser($user);
             $entityManager->flush();
