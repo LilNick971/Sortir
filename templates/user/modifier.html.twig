@@ -3,13 +3,9 @@
 {% block title %}Modifier profil{% endblock %}
 
 {% block body %}
-    {% if not is_granted('ROLE_USER_ACTIF') %}
-        <p style="color: red">Votre compte n'est pas actif !</p>
-        <p style="color: red">Veuillez contacter l'administrateur à truc@admin.fr</p>
-    {% endif %}
     <h1>Modifier votre profil</h1>
-    {{ form_start(registrationForm) }}
-        {{ form_widget(registrationForm) }}
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
         <button type="submit" class="btn">Modifier</button>
-    {{ form_end(registrationForm) }}
+    {{ form_end(form) }}
 {% endblock %}

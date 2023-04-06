@@ -8,6 +8,7 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\LectureCSVType;
 use App\Form\RegistrationFormType;
+use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,49 +26,72 @@ class UserController extends AbstractController
 {
 
     #[Route('/modifier', name: '_modifier')]
-    public function modifier(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function modifier(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
+        UserPasswordHasherInterface $userPasswordHasher
+    ): Response
     {
         $user = $entityManager->find(User::class, $this->getUser()->getId());
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // On récupère les images transmises
-            $imageFile = $form->get('image')->getData();
+            if($userPasswordHasher->isPasswordValid($user, $form->get('checkPassword')->getData())) {
+//                 On récupère les images transmises
+                $imageFile = $form->get('image')->getData();
 
-            // On boucle sur les images
-            if ($imageFile){
-                $originalFileName = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // On boucle sur les images
+                if ($imageFile) {
+                    $originalFileName = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
 
-                $safeFilename = $slugger->slug($originalFileName);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+                    $safeFilename = $slugger->slug($originalFileName);
+                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
 
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+                    try {
+                        $imageFile->move(
+                            $this->getParameter('images_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    // On crée l'image dans la base de données
+                    $img = new Image();
+                    $img->setValeur($newFilename);
+
+                    $user->setAvatar($img);
                 }
 
-                // On crée l'image dans la base de données
-                $img = new Image();
-                $img->setValeur($newFilename);
+                $newPassword = $form->get('newPassword')->getData();
+                if ($newPassword){
+                    $user->setPassword(
+                        $userPasswordHasher->hashPassword(
+                            $user,
+                            $newPassword
+                        )
+                    );
+                }
 
-                $user->setAvatar($img);
+                $entityManager->persist($user);
+                $entityManager->flush();
+                // do anything else you need here, like send an email
+
+                return $this->redirectToRoute('user_afficher',
+                [
+                    'participant' => $user->getId()
+                ]);
+            } else {
+                $this->addFlash('echec', "Le mot de passe est incorrect, modifications annulées");
+                return $this->redirectToRoute('sortie_ajout');
             }
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-            // do anything else you need here, like send an email
-
-            return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('user/modifier.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
+        return $this->render('user/modifier.html.twig',
+            compact('form')
+        );
     }
 
     #[IsGranted('ROLE_USER_ACTIF')]
