@@ -64,7 +64,6 @@ class SortieRepository extends ServiceEntityRepository
             $query = $query
                 ->orWhere(':sNon NOT MEMBER OF q.users')
                 ->setParameter('sNon', $user);
-            $etatnecessaire = false;
         }
 
         if ($filtre->getSortiePassee()){

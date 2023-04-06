@@ -45,10 +45,6 @@ class SortieController extends AbstractController
 
         $listeSortie = $sortieRepository->findSearch($filtre, $this->getUser());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $listeSortie = $sortieRepository->findSearch($filtre, $this->getUser());
-        }
-
         return $this->render('sortie/liste.html.twig',
             compact('listeSortie', 'form'),
         );

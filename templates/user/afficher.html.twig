@@ -3,15 +3,20 @@
 {% block title %}Afficher profil{% endblock %}
 {% block body %}
 
-    <img src="{{ asset('uploads/' ~ participant.avatar ) }}" alt="Avatar"/>
+    <img src="{{ asset('uploads/' ~ participant.avatar ) }}" alt=""/>
     <h1>{{ participant.pseudo }}</h1>
+    {% if not is_granted('ROLE_USER_ACTIF') %}
+        <p style="color: red">Votre compte n'est pas actif !</p>
+        <p style="color: red">Veuillez contacter l'administrateur à truc@admin.fr</p>
+    {% endif %}
         <p>Prénom : {{ participant.prenom }}</p>
         <p>Nom : {{ participant.nom }}</p>
         <p>Téléphone : {{ participant.telephone }}</p>
         <p>Email : {{ participant.email }}</p>
-        {% if user.campus is not null %}
+        {% if participant.campus is not null %}
             <p>Campus : {{ participant.campus.nom }}</p>
         {% endif %}
+    <p><a href="{{ url('user_modifier') }}">Modifier</a></p>
 {% endblock %}
 
 
