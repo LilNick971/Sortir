@@ -9,6 +9,7 @@ use App\Entity\Sortie;
 use App\Entity\Ville;
 use App\Form\FiltreFormType;
 use App\Form\SortieType;
+use App\Form\VilleType;
 use App\Repository\SortieRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,15 +42,13 @@ class SortieController extends AbstractController
         $filtre = new Filtre();
         $form = $this->createForm(FiltreFormType::class, $filtre);
         $form->handleRequest($request);
-//        $search = $sortieRepository->findSearch($filtre, $this->getUser());
 
-        $listeSortie =$sortieRepository->listeSortieAffichage();
+        $listeSortie = $sortieRepository->findSearch($filtre, $this->getUser());
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $listeSortie = $sortieRepository->findSearch($filtre, $this->getUser());
-
         }
+
         return $this->render('sortie/liste.html.twig',
             compact('listeSortie', 'form'),
         );
@@ -63,13 +62,17 @@ class SortieController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response
     {
-        if($this->getUser() === $sortie->getOrganisateur() || in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+        if($this->getUser() === $sortie->getOrganisateur()) {
             $etat = $entityManager->getRepository(Etat::class)->find(6);
             $sortie->setEtat($etat);
             $entityManager->persist($sortie);
             $entityManager->flush();
         } else{
-            $this->addFlash('echec', "Vous n'êtes pas l'organisateur de cette sortie");
+            if(in_array('ROLE_ADMIN', $this->getUser()->getRoles())){
+                $this->addFlash('echec', "Veuillez passer par le tableau de gestion");
+            } else {
+                $this->addFlash('echec', "Vous n'êtes pas l'organisateur de cette sortie");
+            }
         }
 
         return $this->redirectToRoute('sortie_liste');
@@ -82,13 +85,17 @@ class SortieController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response
     {
-        if($this->getUser() === $sortie->getOrganisateur() || in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+        if($this->getUser() === $sortie->getOrganisateur()) {
             $etat = $entityManager->getRepository(Etat::class)->find(2);
             $sortie->setEtat($etat);
             $entityManager->persist($sortie);
             $entityManager->flush();
         } else{
-            $this->addFlash('echec', "Vous n'êtes pas l'organisateur de cette sortie");
+            if(in_array('ROLE_ADMIN', $this->getUser()->getRoles())){
+                $this->addFlash('echec', "Veuillez passer par le tableau de gestion");
+            } else {
+                $this->addFlash('echec', "Vous n'êtes pas l'organisateur de cette sortie");
+            }
         }
 
         return $this->redirectToRoute('sortie_liste');
@@ -102,7 +109,7 @@ class SortieController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response
     {
-        if($this->getUser() === $sortie->getOrganisateur() || in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+        if($this->getUser() === $sortie->getOrganisateur()) {
             $sortie->setVille($sortie->getLieu()->getVille());
             $sortie->setChoixLieu($sortie->getLieu());
             $sortieForm = $this->createForm(SortieType::class, $sortie);
@@ -134,7 +141,11 @@ class SortieController extends AbstractController
                 compact('sortieForm'),
             );
         } else{
-            $this->addFlash('echec', "Vous n'êtes pas l'organisateur de cette sortie");
+            if(in_array('ROLE_ADMIN', $this->getUser()->getRoles())){
+                $this->addFlash('echec', "Veuillez passer par le tableau de gestion");
+            } else {
+                $this->addFlash('echec', "Vous n'êtes pas l'organisateur de cette sortie");
+            }
         }
         return $this->redirectToRoute('sortie_liste');
     }
@@ -255,4 +266,27 @@ class SortieController extends AbstractController
             compact('sortie'),
         );
     }
+
+    #[IsGranted('ROLE_USER_ACTIF')]
+    #[Route('/nouvelleville', name: 'ajout_ville')]
+    public function ajouterVille(
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ): Response
+    {
+        $ville = new Ville();
+        $formVille = $this->createForm(VilleType::class, $ville);
+        $formVille->handleRequest($request);
+
+        if( $formVille->isSubmitted() && $formVille->isValid()) {
+            $entityManager->persist($ville);
+            $entityManager->flush();
+            return $this->redirectToRoute('sortie_liste');
+        }
+
+        return $this->render('sortie/ajoutville.html.twig',
+            compact('formVille'),
+        );
+    }
+
 }

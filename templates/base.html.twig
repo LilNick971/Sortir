@@ -23,9 +23,11 @@
                 <a href="{{ url('app_login') }}">Connexion</a>
                 <a href="{{ url('app_register') }}">Créer un compte</a>
             {% endif %}
+
             <div class="myLinks">
                 {% if is_granted('ROLE_USER_ACTIF') %}
                     <a href="{{ url('sortie_ajout') }}">Ajouter une Sortie</a>
+                    <a href="{{ url('ajout_ville') }}">Ajouter une ville</a>
                 {% endif %}
                 {% if app.user %}
                     {#                <a href="{{ url('user_modifier') }}">Modifier mon compte compte</a>#}

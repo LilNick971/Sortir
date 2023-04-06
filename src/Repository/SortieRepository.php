@@ -46,35 +46,46 @@ class SortieRepository extends ServiceEntityRepository
         $query->where('q.etat != 1');
         return $query->getQuery()->getResult();
     }
-
-//    /**
-//     * @return Sortie[] Returns an array of Sortie objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Sortie
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
     public function findSearch(Filtre $filtre, User $user)
     {
+        $listeEtat = [2,3,4];
+        $etatnecessaire = true;
         $query = $this
             ->createQueryBuilder('q');
+
+        if ($filtre->getSortieInscrit()){
+            $query = $query
+                ->orWhere(':sIns MEMBER OF q.users')
+                ->setParameter('sIns', $user);
+            $etatnecessaire = false;
+        }
+
+        if ($filtre->getSortieNonInscrit()){
+            $query = $query
+                ->orWhere(':sNon NOT MEMBER OF q.users')
+                ->setParameter('sNon', $user);
+            $etatnecessaire = false;
+        }
+
+        if ($filtre->getSortiePassee()){
+            $query = $query
+                ->orWhere('q.etat = :sPas')
+                ->setParameter('sPas', 5);
+            $etatnecessaire = false;
+        }
+
+        if ($filtre->getSortieOrganisateur()){
+            $query = $query
+                ->orWhere('q.organisateur = :sOrg')
+                ->setParameter('sOrg', $user);
+            $etatnecessaire = false;
+        }
+
+        if($etatnecessaire){
+            $query = $query
+            ->andWhere('q.etat IN (:etatsValides)')
+                ->setParameter('etatsValides', $listeEtat);
+        }
 
         if ($filtre->getCampus()){
             $query = $query
@@ -98,32 +109,6 @@ class SortieRepository extends ServiceEntityRepository
             $query = $query
                 ->andWhere('q.dateLimiteInscription <= :dLim')
                 ->setParameter('dLim', $filtre->getDateLimite());
-        }
-
-        if ($filtre->getSortieOrganisateur()){
-            $query = $query
-                ->andWhere('q.organisateur = :sOrg')
-                ->setParameter('sOrg', $user);
-        }
-
-        if ($filtre->getSortieInscrit() && !$filtre->getSortieNonInscrit()){
-            $query = $query
-//                ->innerJoin('q.users', 'u')
-                ->andWhere(':sIns MEMBER OF q.users')
-                ->setParameter('sIns', $user);
-        }
-
-        if ($filtre->getSortieNonInscrit() && !$filtre->getSortieInscrit()){
-            $query = $query
-//                ->innerJoin('q.users', 'u')
-                ->andWhere(':sNon NOT MEMBER OF q.users')
-                ->setParameter('sNon', $user);
-        }
-
-        if ($filtre->getSortiePassee()){
-            $query = $query
-                ->andWhere('q.etat = :sPas')
-                ->setParameter('sPas', 5);
         }
 
         return $query->getQuery()->getResult();

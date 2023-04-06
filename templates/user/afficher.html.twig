@@ -2,13 +2,16 @@
 
 {% block title %}Afficher profil{% endblock %}
 {% block body %}
+
     <img src="{{ asset('uploads/' ~ participant.avatar ) }}" alt="Avatar"/>
     <h1>{{ participant.pseudo }}</h1>
         <p>Prénom : {{ participant.prenom }}</p>
         <p>Nom : {{ participant.nom }}</p>
         <p>Téléphone : {{ participant.telephone }}</p>
         <p>Email : {{ participant.email }}</p>
-        <p>Campus : {{ participant.campus.nom }}</p>
+        {% if user.campus is not null %}
+            <p>Campus : {{ participant.campus.nom }}</p>
+        {% endif %}
 {% endblock %}
 
 

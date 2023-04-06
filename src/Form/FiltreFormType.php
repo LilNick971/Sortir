@@ -22,7 +22,8 @@ class FiltreFormType extends AbstractType
         $builder
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
-                'choice_label' => 'nom'
+                'choice_label' => 'nom',
+                'required' => false
             ])
             ->add('nom', TextType::class, [
                 'required' => false
