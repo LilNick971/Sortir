@@ -6,7 +6,7 @@
 
 {% block body %}
 <p>Nom de la sortie : {{ sortie.nom }}</p>
-<p>Organisateur : <a href="{{ url('user_afficher', {'user': sortie.organisateur}) }}">{{ sortie.organisateur.pseudo }}</a></p>
+<p>Organisateur : <a href="{{ url('user_afficher', {'participant': sortie.organisateur}) }}">{{ sortie.organisateur.pseudo }}</a></p>
 <p>Date et heure de la sortie : {{ sortie.dateHeureDebut | date('d/m/Y H:i') }}</p>
 <p>Date limite d'inscription : {{ sortie.dateLimiteInscription | date('d/m/Y H:i')}}</p>
 {% if sortie.nbInscriptionsMax is not null%}
@@ -33,9 +33,19 @@
         {% endif %}
     {% endif %}
     <br>
-{% if app.user not in sortie.users and sortie.etat.libelle is same as 'Ouverte' and (sortie.nbInscriptionsMax is not null and sortie.getNbInscrits() < sortie.nbInscriptionsMax) %}
-    <a href="{{ path('user_inscrire', {'sortie': sortie.id}) }}">S'inscrire à la sortie</a>
-{% endif %}
+
+    {% if sortie.nbInscriptionsMax is not null %}
+        {% if app.user not in sortie.users and sortie.etat.libelle is same as 'Ouverte' and sortie.getNbInscrits() < sortie.nbInscriptionsMax %}
+            <a href="{{ path('user_inscrire', {'sortie': sortie.id}) }}">S'inscrire à la sortie</a>
+        {% endif %}
+    {% endif %}
+
+    {% if sortie.nbInscriptionsMax is null %}
+        {% if app.user not in sortie.users and sortie.etat.libelle is same as 'Ouverte' %}
+            <a href="{{ path('user_inscrire', {'sortie': sortie.id}) }}">S'inscrire à la sortie</a>
+        {% endif %}
+    {% endif %}
+
 {% if app.user in sortie.users and (sortie.etat.libelle is same as 'Ouverte' or sortie.etat.libelle is same as 'Clôturée')%}
   <a href="{{ path('user_desister', {'sortie': sortie.id}) }}">Se désister de la sortie</a>
 {% endif %}
