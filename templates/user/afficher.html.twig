@@ -8,7 +8,11 @@
         <p>Nom : {{ user.nom }}</p>
         <p>Téléphone : {{ user.telephone }}</p>
         <p>Email : {{ user.email }}</p>
-        <p>Campus : {{ user.campus.nom }}</p>
+        {% if user.campus is not null %}
+            <p>Campus : {{ user.campus.nom }}</p>
+        {% endif %}
+    <a href="{{ url('user_modifier') }}">Modifier mon compte</a>
+
 {% endblock %}
 
 

@@ -37,8 +37,7 @@ class UserCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $ajoutMultiple = Action::new('ajoutMultiple', 'Ajouter plusieurs utilisateurs')
-            ->displayAsButton()
-            ->linkToCrudAction('ajoutMultiple')
+            ->linkToRoute('user_ajoutmultiple')
             ->createAsGlobalAction();
 
         return $actions
@@ -111,10 +110,6 @@ class UserCrudController extends AbstractCrudController
             $hash = $this->userPasswordHasher->hashPassword($this->getUser(), $password);
             $form->getData()->setPassword($hash);
         };
-    }
-
-    private function ajoutMultiple(){
-
     }
 
 }

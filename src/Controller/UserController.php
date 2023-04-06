@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Image;
 use App\Entity\Sortie;
 use App\Entity\User;
@@ -91,7 +92,8 @@ class UserController extends AbstractController
     {
 
         $user = $entityManager->find(User::class, $this->getUser()->getId());
-        if($sortie->getNbInscriptionsMax() !== null and $sortie->getNbInscrits() < $sortie->getNbInscriptionsMax()) {
+        $etatOuvert = $entityManager->getRepository(Etat::class)->find(2);
+        if($sortie->getNbInscriptionsMax() !== null and $sortie->getNbInscrits() < $sortie->getNbInscriptionsMax() and $sortie->getEtat() === $etatOuvert) {
             $user->addSorty($sortie);
             $sortie->addUser($user);
             $entityManager->flush();
