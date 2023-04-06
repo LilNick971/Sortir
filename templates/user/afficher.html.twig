@@ -9,7 +9,7 @@
         <p>Nom : {{ participant.nom }}</p>
         <p>Téléphone : {{ participant.telephone }}</p>
         <p>Email : {{ participant.email }}</p>
-        {% if user.campus is not null %}
+        {% if participant.campus is not null %}
             <p>Campus : {{ participant.campus.nom }}</p>
         {% endif %}
 {% endblock %}
