@@ -103,7 +103,7 @@ class UserController extends AbstractController
     ): Response
     {
         $user = $this->getUser();
-        if (in_array('ROLE_USER_ACTIF', $user->getRoles(),true) || $user->getId() === $participant->getId()){
+        if (in_array('ROLE_ADMIN', $user->getRoles(),true) || in_array('ROLE_USER_ACTIF', $user->getRoles(),true) || $user->getId() === $participant->getId()){
             return $this->render('user/afficher.html.twig', compact("participant"));
         }
         return $this->redirectToRoute('sortie_liste');
