@@ -62,8 +62,9 @@ class SortieRepository extends ServiceEntityRepository
 
         if ($filtre->getSortieNonInscrit()){
             $query = $query
-                ->orWhere(':sNon NOT MEMBER OF q.users')
-                ->setParameter('sNon', $user);
+                ->orWhere(':sNon NOT MEMBER OF q.users AND q.etat IN (:etatsValides)')
+                ->setParameter('sNon', $user)
+                ->setParameter('etatsValides', $listeEtat);
         }
 
         if ($filtre->getSortiePassee()){
@@ -83,7 +84,7 @@ class SortieRepository extends ServiceEntityRepository
         if($etatnecessaire){
             $query = $query
             ->andWhere('q.etat IN (:etatsValides)')
-                ->setParameter('etatsValides', $listeEtat);
+            ->setParameter('etatsValides', $listeEtat);
         }
 
         if ($filtre->getCampus()){
