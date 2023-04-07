@@ -62,7 +62,14 @@
                     {% endif %}
                 </td>
             {% endif %}
-            <td><a href="{{ path("user_afficher", {"participant" : sortie.organisateur.id}) }}">{{ sortie.organisateur.pseudo }}</a></td>
+            <td>
+                {% if not is_granted('ROLE_USER_ACTIF') %}
+                    {{ sortie.organisateur.pseudo }}
+                {% endif %}
+                {% if is_granted('ROLE_USER_ACTIF') %}
+                    <a href="{{ path("user_afficher", {"participant" : sortie.organisateur.id}) }}">{{ sortie.organisateur.pseudo }}</a>
+                {% endif %}
+            </td>
             {% if is_granted('ROLE_USER_ACTIF') %}
                 <td><a href="{{ url('sortie_detail', {'sortie' : sortie.id}) }}">Afficher</a></td>
             {% endif %}

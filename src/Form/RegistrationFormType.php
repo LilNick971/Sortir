@@ -23,17 +23,33 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('pseudo')
-            ->add('prenom')
-            ->add('nom')
-            ->add('telephone')
-            ->add('email')
+            ->add('pseudo', null ,
+                [
+                    'label' => 'Pseudo *'
+                ])
+            ->add('prenom', null ,
+                [
+                    'label' => 'Prénom *'
+                ])
+            ->add('nom', null ,
+                [
+                    'label' => 'Nom *'
+                ])
+            ->add('telephone', null ,
+                [
+                    'label' => 'Telephone'
+                ])
+            ->add('email', null ,
+            [
+                'label' => 'Email *'
+            ])
             ->add('campus', EntityType::class,
             [
                 'class' => Campus::class,
                 'required' => false,
                 'choice_label' => 'nom',
-                'placeholder' => 'Aucun campus'
+                'placeholder' => 'Aucun campus',
+                'label' => 'Campus'
             ])
             ->add('password', RepeatedType::class, [
                 // instead of being set onto the object directly,
@@ -42,8 +58,8 @@ class RegistrationFormType extends AbstractType
                 'invalid_message' => 'Le mot de passe ne correspond pas. Veuillez le réécrire.',
                 'options' => ['attr' => ['autocomplete' => 'new-password']],
 //                'required' => true,
-                'first_options' => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Confirmer mot de passe'],
+                'first_options' => ['label' => 'Mot de passe *'],
+                'second_options' => ['label' => 'Confirmer mot de passe *'],
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank([
